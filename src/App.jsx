@@ -124,7 +124,7 @@ const PerfumeDetailsModal = ({ perfume, allPerfumes, ajouterAuPanier, onClose, o
 }
 
 // =================================================================
-// 2. L-CARTAT DYAL RWAY7 (Hna fin derna t-ta3dilat l-Telifon)
+// 2. L-CARTAT DYAL RWAY7
 // =================================================================
 const PerfumeCard = ({ perfume, ajouterAuPanier, onOpenDetails }) => {
   const [selectedVariant, setSelectedVariant] = useState(perfume.variants[0]);
@@ -244,7 +244,8 @@ function App() {
 
   const fetchPerfumes = () => {
     setIsLoading(true);
-    axios.get('/api/perfumes')
+    // ⚠️ هنا فين بدلنا الرابط الأول ⚠️
+    axios.get('https://orca-app-ziqwp.ondigitalocean.app/api/perfumes')
       .then(response => { 
         setPerfumes(response.data.data);
         setIsLoading(false);
@@ -339,7 +340,8 @@ function App() {
 
     const toastId = toast.loading("نأخذك إلى الواتساب الآن... 🚀");
 
-    axios.post('/api/commandes', commandeData)
+    // ⚠️ وهنا فين بدلنا الرابط الثاني ⚠️
+    axios.post('https://orca-app-ziqwp.ondigitalocean.app/api/commandes', commandeData)
       .then(response => {
         toast.dismiss(toastId);
         setCart([]); setIsCartOpen(false); setClientInfo({ nom: '', telephone: '', ville: '' }); setPaymentMethod('livraison');
@@ -524,7 +526,6 @@ function App() {
           </div>
         </div>
 
-        {/* 🌟 HNA ZEDNA grid-cols-2 BASH IBANO B 2 F TLEFON 🌟 */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 relative z-0 mb-16">
           {isLoading ? (
             <div className="col-span-full flex flex-col items-center justify-center py-24">
@@ -772,4 +773,4 @@ function App() {
   )
 }
 
-export default App  
+export default App

@@ -13,7 +13,8 @@ export default function Admin({ onClose, onProductAdded }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     
-    axios.post('/api/perfumes', formData)
+    // ⚠️ هنا فين حطينا الرابط الجديد ديال الباكاند فـ DigitalOcean ⚠️
+    axios.post('https://orca-app-ziqwp.ondigitalocean.app/api/perfumes', formData)
       .then(response => {
         setMessage('✅ تم إضافة المنتج بنجاح!')
         setFormData({ name: '', inspiration: '', description: '', price30: '', price50: '', price100: '', image: '', category: 'للجنسين 🚻' })
