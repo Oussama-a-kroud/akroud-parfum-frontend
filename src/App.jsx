@@ -344,6 +344,13 @@ function App() {
   const validerCommande = (e) => {
     e.preventDefault();
     
+    // 🌟 الضربة القاضية: نصيفطو المبيعة لفيسبوك هي الأولى قبل كلشي!
+    ReactPixel.track('Purchase', {
+      value: prixTotal,
+      currency: 'MAD'
+    });
+    // -----------------------------------------------------
+    
     const numeroWhatsApp = "212668889156"; 
     const listeRway7 = cart.map(item => `- ${item.perfume.name} [${item.variant.size}] (x${item.quantite}) : ${Number(item.variant.price) * item.quantite} درهم`).join('\n');
     const paiementText = paymentMethod === 'livraison' ? '💵 نقداً (الدفع عند الاستلام)' : '🏦 تحويل بنكي';
@@ -361,40 +368,28 @@ function App() {
 
     const toastId = toast.loading("نأخذك إلى الواتساب الآن... 🚀");
 
-    // طلب واحد لـ API كيجمع كلشي
     axios.post('https://orca-app-ziqwp.ondigitalocean.app/api/commandes', commandeData)
       .then(response => {
         toast.dismiss(toastId);
-
-        // --- إرسال المبيعة (Purchase) لفيسبوك بالثمن الإجمالي ---
-        ReactPixel.track('Purchase', {
-          value: prixTotal,
-          currency: 'MAD'
-        });
-        // -----------------------------------------------------
-
-        // تنظيف السلة والمعلومات
         setCart([]); 
         setIsCartOpen(false); 
         setClientInfo({ nom: '', telephone: '', ville: '' }); 
         setPaymentMethod('livraison');
         
-        // ⚠️ الحل السحري: تأخير التوجيه بـ 800 ميلي ثانية باش البيكسل يدير خدمتو
+        // زدنا الوقت لـ 1500 ميلي ثانية (ثانية ونص) باش المتصفح يصيفط البيكسل على خاطرو
         setTimeout(() => {
           window.location.assign(lienWhatsApp); 
-        }, 800);
+        }, 1500);
       })
       .catch(error => {
         console.error("Erreur commande:", error);
         toast.dismiss(toastId);
-        
-        // واخا يوقع مشكل فالسيرفر، كندوزو الكليان للواتساب باش ما تضيعش المبيعة
         setCart([]); 
         setIsCartOpen(false);
         
         setTimeout(() => {
           window.location.assign(lienWhatsApp); 
-        }, 800);
+        }, 1500);
       });
   }
   const filteredPerfumes = perfumes.filter(perfume => {
