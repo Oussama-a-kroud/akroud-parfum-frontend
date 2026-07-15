@@ -379,8 +379,10 @@ function App() {
         setClientInfo({ nom: '', telephone: '', ville: '' }); 
         setPaymentMethod('livraison');
         
-        // التوجيه للواتساب
-        window.location.assign(lienWhatsApp); 
+        // ⚠️ الحل السحري: تأخير التوجيه بـ 800 ميلي ثانية باش البيكسل يدير خدمتو
+        setTimeout(() => {
+          window.location.assign(lienWhatsApp); 
+        }, 800);
       })
       .catch(error => {
         console.error("Erreur commande:", error);
@@ -389,7 +391,10 @@ function App() {
         // واخا يوقع مشكل فالسيرفر، كندوزو الكليان للواتساب باش ما تضيعش المبيعة
         setCart([]); 
         setIsCartOpen(false);
-        window.location.assign(lienWhatsApp); 
+        
+        setTimeout(() => {
+          window.location.assign(lienWhatsApp); 
+        }, 800);
       });
   }
   const filteredPerfumes = perfumes.filter(perfume => {
