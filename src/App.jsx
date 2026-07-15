@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Canvas } from '@react-three/fiber'
 import PerfumeBottle from './PerfumeBottle'
+import ReactPixel from 'react-facebook-pixel'
 import Admin from './Admin'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -256,7 +257,18 @@ function App() {
       })
   }
 
-  useEffect(() => { fetchPerfumes() }, [])
+  useEffect(() => { 
+    fetchPerfumes();
+
+    // --- إعداد Meta Pixel ---
+    const options = {
+      autoConfig: true,
+      debug: false, 
+    };
+    ReactPixel.init('1038470972449495', options); // الـ ID ديالك
+    ReactPixel.pageView(); // كيسجل أي واحد دخل للسيت
+    // ------------------------
+  }, [])
 
   const ajouterAuPanier = (perfume, variant) => {
     const existingItemIndex = cart.findIndex(
@@ -272,6 +284,13 @@ function App() {
     toast.success(`تمت إضافة ${perfume.name} إلى السلة! 🛍️`, {
       style: { borderRadius: '10px', background: '#333', color: '#fff' },
       iconTheme: { primary: '#f59e0b', secondary: '#fff' },
+    });
+
+    // --- إرسال بيانات السلة لفيسبوك ---
+    ReactPixel.track('AddToCart', {
+      content_name: perfume.name,
+      value: Number(variant.price),
+      currency: 'MAD'
     });
   }
 
@@ -340,22 +359,37 @@ function App() {
 
     const toastId = toast.loading("نأخذك إلى الواتساب الآن... 🚀");
 
-    // ⚠️ وهنا فين بدلنا الرابط الثاني ⚠️
+    // طلب واحد لـ API كيجمع كلشي
     axios.post('https://orca-app-ziqwp.ondigitalocean.app/api/commandes', commandeData)
       .then(response => {
         toast.dismiss(toastId);
-        setCart([]); setIsCartOpen(false); setClientInfo({ nom: '', telephone: '', ville: '' }); setPaymentMethod('livraison');
+
+        // --- إرسال المبيعة (Purchase) لفيسبوك بالثمن الإجمالي ---
+        ReactPixel.track('Purchase', {
+          value: prixTotal,
+          currency: 'MAD'
+        });
+        // -----------------------------------------------------
+
+        // تنظيف السلة والمعلومات
+        setCart([]); 
+        setIsCartOpen(false); 
+        setClientInfo({ nom: '', telephone: '', ville: '' }); 
+        setPaymentMethod('livraison');
         
+        // التوجيه للواتساب
         window.location.assign(lienWhatsApp); 
       })
       .catch(error => {
+        console.error("Erreur commande:", error);
         toast.dismiss(toastId);
-        setCart([]); setIsCartOpen(false);
         
+        // واخا يوقع مشكل فالسيرفر، كندوزو الكليان للواتساب باش ما تضيعش المبيعة
+        setCart([]); 
+        setIsCartOpen(false);
         window.location.assign(lienWhatsApp); 
       });
   }
-
   const filteredPerfumes = perfumes.filter(perfume => {
     const matchSearch = perfume.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                         perfume.inspiration.toLowerCase().includes(searchQuery.toLowerCase());
