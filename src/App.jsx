@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Canvas } from '@react-three/fiber'
 import PerfumeBottle from './PerfumeBottle'
-import ReactPixel from 'react-facebook-pixel'
+import ReactPixelModule from 'react-facebook-pixel';
 import Admin from './Admin'
 import toast, { Toaster } from 'react-hot-toast'
+
+const ReactPixel = ReactPixelModule.default || ReactPixelModule;
 
 const getImageUrl = (image) => {
   const imageParDefaut = "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=800&auto=format&fit=crop";
